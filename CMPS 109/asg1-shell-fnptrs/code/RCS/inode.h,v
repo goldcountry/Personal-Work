@@ -1,0 +1,255 @@
+head	1.6;
+access;
+symbols;
+locks;
+comment	@ * @;
+
+
+1.6
+date	2014.03.27.02.55.18;	author -;	state -;
+branches;
+next	1.5;
+
+1.5
+date	2014.03.27.01.39.40;	author -;	state -;
+branches;
+next	1.4;
+
+1.4
+date	2014.03.27.00.15.54;	author -;	state -;
+branches;
+next	1.3;
+
+1.3
+date	2014.03.27.00.10.32;	author -;	state -;
+branches;
+next	1.2;
+
+1.2
+date	2013.06.19.00.50.59;	author -;	state -;
+branches;
+next	1.1;
+
+1.1
+date	2013.06.19.00.32.08;	author -;	state -;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.6
+log
+@-
+@
+text
+@// $Id: inode.h,v 1.5 2014-03-26 18:39:40-07 - - $
+
+#ifndef __INODE_H__
+#define __INODE_H__
+
+#include <exception>
+#include <iostream>
+#include <map>
+#include <vector>
+
+using namespace std;
+
+#include "util.h"
+
+//
+// inode_t -
+//    An inode is either a directory or a plain file.
+//
+
+enum inode_t {DIR_INODE, FILE_INODE};
+
+//
+// directory -
+//    A directory is a list of paired strings (filenames) and inodes.
+//    An inode in a directory may be a directory or a file.
+//
+
+class inode;
+typedef map<string, inode*> directory;
+
+//
+// inode_state -
+//    A small convenient class to maintain the state of the simulated
+//    process:  the root (/), the current directory (.), and the
+//    prompt.
+//
+
+class inode_state {
+   friend class inode;
+   friend ostream& operator<< (ostream& out, const inode_state&);
+   private:
+      inode_state (const inode_state&) = delete; // copy ctor
+      inode_state& operator= (const inode_state&) = delete; // op=
+      inode* root;
+      inode* cwd;
+      string prompt;
+   public:
+      inode_state();
+};
+
+ostream& operator<< (ostream& out, const inode_state&);
+
+
+//
+// class inode -
+//
+// inode ctor -
+//    Create a new inode of the given type, using a union.
+// get_inode_nr -
+//    Retrieves the serial number of the inode.  Inode numbers are
+//    allocated in sequence by small integer.
+// size -
+//    Returns the size of an inode.  For a directory, this is the
+//    number of dirents.  For a text file, the number of characters
+//    when printed (the sum of the lengths of each word, plus the
+//    number of words.
+// readfile -
+//    Returns a copy of the contents of the wordvec in the file.
+//    Throws an yshell_exn for a directory.
+// writefile -
+//    Replaces the contents of a file with new contents.
+//    Throws an yshell_exn for a directory.
+// remove -
+//    Removes the file or subdirectory from the current inode.
+//    Throws an yshell_exn if this is not a directory, the file
+//    does not exist, or the subdirectory is not empty.
+//    Here empty means the only entries are dot (.) and dotdot (..).
+// mkdir -
+//    Creates a new directory under the current directory and 
+//    immediately adds the directories dot (.) and dotdot (..) to it.
+//    Note that the parent (..) of / is / itself.  It is an error
+//    if the entry already exists.
+// mkfile -
+//    Create a new empty text file with the given name.  Error if
+//    a dirent with that name exists.
+//    
+
+
+class inode {
+   friend class inode_state;
+   private:
+      int inode_nr;
+      inode_t type;
+      union {
+         directory* dirents;
+         wordvec* data;
+      } contents;
+      static int next_inode_nr;
+   public:
+      inode (inode_t init_type);
+      inode (const inode& source);
+      inode& operator= (const inode& from);
+      int get_inode_nr() const;
+      int size() const;
+      const wordvec& readfile() const;
+      void writefile (const wordvec& newdata);
+      void remove (const string& filename);
+      inode& mkdir (const string& dirname);
+      inode& mkfile (const string& filename);
+};
+
+#endif
+
+@
+
+
+1.5
+log
+@-
+@
+text
+@d1 1
+a1 1
+// $Id: inode.h,v 1.4 2014-03-26 17:15:54-07 - - $
+d88 1
+@
+
+
+1.4
+log
+@-
+@
+text
+@d1 1
+a1 1
+// $Id: inode.h,v 1.3 2014-03-26 17:10:32-07 - - $
+a12 1
+#include "trace.h"
+@
+
+
+1.3
+log
+@-
+@
+text
+@d1 1
+a1 1
+// $Id: inode.h,v 1.2 2013-06-18 17:50:59-07 - - $
+d30 1
+a30 1
+typedef map<string, inode *> directory;
+d45 2
+a46 2
+      inode *root;
+      inode *cwd;
+d95 2
+a96 2
+         directory *dirents;
+         wordvec *data;
+@
+
+
+1.2
+log
+@-
+@
+text
+@d1 1
+a1 1
+// $Id: inode.h,v 1.1 2013-06-18 17:32:08-07 - - $
+d41 1
+a41 1
+   friend ostream &operator<< (ostream &out, const inode_state &);
+d43 2
+a44 2
+      inode_state (const inode_state &) = delete; // copy ctor
+      inode_state &operator= (const inode_state &) = delete; // op=
+d52 1
+a52 1
+ostream &operator<< (ostream &out, const inode_state &);
+d101 2
+a102 2
+      inode (const inode &source);
+      inode &operator= (const inode &from);
+d105 5
+a109 5
+      const wordvec &readfile() const;
+      void writefile (const wordvec &newdata);
+      void remove (const string &filename);
+      inode &mkdir (const string &dirname);
+      inode &mkfile (const string &filename);
+@
+
+
+1.1
+log
+@-
+@
+text
+@d1 1
+a1 1
+// $Id: inode.h,v 1.6 2013-06-07 15:43:30-07 - - $
+d43 2
+a44 2
+      inode_state (const inode_state &); // disable copy ctor
+      inode_state &operator= (const inode_state &); // disable op=
+@
