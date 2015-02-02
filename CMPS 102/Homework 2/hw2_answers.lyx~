@@ -1,0 +1,539 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+CMPS 102 Homework 2
+\end_layout
+
+\begin_layout Author
+Benjamin Gordon / bcgordon@ucsc.edu
+\end_layout
+
+\begin_layout Date
+5/8/2014
+\end_layout
+
+\begin_layout Section
+Problem 1
+\end_layout
+
+\begin_layout Standard
+Since only one contestant may be in the pool at any given time, and each
+ contestant takes exactly their projected swimming time, the swimming portion
+ of the competition will 
+\emph on
+always take the same amount of time
+\emph default
+, no matter how the contestants are ordered.
+ This is true simply by the commutative property of mathematics, i.e.
+ A+B = B+A.
+ Therefore, since the running and biking times are allowed to overlap, it
+ seems logical that the best way to order the contestants is to overlap
+ these sections as much as possible.
+ From these observations we can come up with a simple algorithm: The next
+ contestant is the one whose projected biking and running times are the
+ longest.
+ 
+\end_layout
+
+\begin_layout Standard
+Since we don't have to wait until each contestant is done biking and running
+ - just until they are done swimming - it is obvious that the more contestants
+ we can have biking and/or running at the same time, the more efficient
+ the algorithm and the faster the race will be over.
+ Having the contestants with the longer running times at the end will extend
+ the duration of the entire race due to a small number of contestants who
+ are still running.
+ Using the proposed algorithm ensures that the maximum number of contestants
+ are running and/or biking at the same time.
+\end_layout
+
+\begin_layout Section
+Problem 2
+\end_layout
+
+\begin_layout Standard
+Let 
+\emph on
+a
+\emph default
+(n) be the total number of packages shipped after 
+\emph on
+n
+\emph default
+ trucks for our greedy algorithm 
+\emph on
+a
+\emph default
+.
+ Likewise, let 
+\emph on
+b
+\emph default
+(n) be the total number of packages shipped after 
+\emph on
+n
+\emph default
+ trucks for some arbitrary non-greedy algorithm 
+\emph on
+b
+\emph default
+.
+ Let 
+\emph on
+P
+\emph default
+(m, n) be the total number of remaining packages to ship for algorithm 
+\emph on
+m
+\emph default
+ after 
+\emph on
+n
+\emph default
+ trucks.
+ 
+\end_layout
+
+\begin_layout Paragraph
+Base Case: 
+\end_layout
+
+\begin_layout Standard
+Because the greedy algorithm packs the maximum number of possible packages
+ onto each truck, and because the order in which packages are shipped cannot
+ change, the only thing that can vary is the point at which trucks leave
+ the station.
+ Our greedy algorithm packs each truck until no further packages can fit;
+ our arbitrary other algorithm does not necessarily do so.
+ Therefore, 
+\emph on
+a
+\emph default
+(1)
+\emph on
+
+\begin_inset Formula $\geq$
+\end_inset
+
+b
+\emph default
+(1).
+\end_layout
+
+\begin_layout Paragraph
+Inductive hypothesis: 
+\end_layout
+
+\begin_layout Standard
+Now we will prove that for any n, if 
+\emph on
+a
+\emph default
+(n)
+\emph on
+
+\begin_inset Formula $\geq$
+\end_inset
+
+b
+\emph default
+(n), then 
+\emph on
+a
+\emph default
+(n+1)
+\emph on
+
+\begin_inset Formula $\geq$
+\end_inset
+
+b
+\emph default
+(n+1).
+ 
+\end_layout
+
+\begin_layout Standard
+Saying 
+\emph on
+a
+\emph default
+(n)
+\emph on
+
+\begin_inset Formula $\geq$
+\end_inset
+
+b
+\emph default
+(n) is equivalent to saying that 
+\emph on
+P
+\emph default
+(a, n)
+\emph on
+
+\begin_inset Formula $\leq$
+\end_inset
+
+P
+\emph default
+(b, n).
+ Since we know that algorithm b has at least as many packages remaining
+ as algorithm a, we can essentially treat this as a separate problem, which
+ is a subset of the original problem.
+ Observe that the total weight that can be fit onto any given truck does
+ not change based on the algorithm used.
+ Therefore, since algorithm 
+\emph on
+a
+\emph default
+ always reaches the upper bound of weight per truck, and algorithm 
+\emph on
+b
+\emph default
+ does not always reach the upper bound of weight per truck, 
+\emph on
+a
+\emph default
+(n+1)
+\begin_inset Formula $\geq$
+\end_inset
+
+
+\emph on
+b
+\emph default
+(n+1) if 
+\emph on
+a
+\emph default
+(n)
+\begin_inset Formula $\geq$
+\end_inset
+
+b(n).
+ 
+\end_layout
+
+\begin_layout Standard
+Therefore, for any number of trucks 
+\emph on
+n
+\emph default
+, 
+\emph on
+a
+\emph default
+(n)
+\begin_inset Formula $\geq$
+\end_inset
+
+
+\emph on
+b
+\emph default
+(n).
+ The last piece of this proof is to state the obvious: the greater the number
+ of packages which can be fit onto each individual truck, the fewer trucks
+ you will need overall.
+\end_layout
+
+\begin_layout Section
+Problem 3
+\end_layout
+
+\begin_layout Paragraph
+Part A: 
+\end_layout
+
+\begin_layout Standard
+This statement is TRUE.
+ Here's why:
+\end_layout
+
+\begin_layout Standard
+The algorithm for building an MST first sorts the edges by weight, then
+ traverses the list of edges, adding each one that does not create a cycle,
+ until it connects every vertex.
+ Now, if we were to square all the weights of all the edges, the sorted
+ order would still be the same.
+ Therefore, since the graph is still the same shape, and the sorted list
+ of edges is still in the same order, the resulting tree will also be the
+ same.
+ 
+\end_layout
+
+\begin_layout Paragraph
+Part B:
+\end_layout
+
+\begin_layout Standard
+This statement is FALSE.
+ Here's a counterexample:
+\end_layout
+
+\begin_layout Standard
+Let's say you have a graph with four vertices, 
+\emph on
+A
+\emph default
+, 
+\emph on
+B
+\emph default
+, 
+\emph on
+C
+\emph default
+, and 
+\emph on
+D
+\emph default
+.
+ We are trying to find the minimum path from A to D.
+ The edges are as follows:
+\end_layout
+
+\begin_layout Standard
+
+\emph on
+AB
+\emph default
+: 5 
+\emph on
+AC
+\emph default
+: 1 
+\emph on
+BD
+\emph default
+: 6 
+\emph on
+CD
+\emph default
+: 9
+\end_layout
+
+\begin_layout Standard
+On our starter graph, Dijkstra's algorithm would choose 
+\emph on
+AC-CD
+\emph default
+ as the minimum path from 
+\emph on
+A
+\emph default
+ to 
+\emph on
+D
+\emph default
+ (weight 10) over 
+\emph on
+AB-BD
+\emph default
+ (weight 11).
+ However, when we square all the weights of all the vertices, 
+\emph on
+AB-BD
+\emph default
+ becomes the minimum path (weight 
+\begin_inset Formula $5^{2}+6^{2}=61$
+\end_inset
+
+) over 
+\emph on
+AC-CD
+\emph default
+ (weight 
+\begin_inset Formula $9^{2}+1^{2}=82$
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Section
+Problem 4
+\end_layout
+
+\begin_layout Standard
+Essentially, this problem is a MST problem.
+ The twist, however, is that we don't know what the actual weights are.
+ We don't know exactly how f increases numbers, but we do know that it is
+ strictly increasing – that is, for any n, 
+\emph on
+f
+\emph default
+(n)<
+\emph on
+f
+\emph default
+(n+1).
+ Therefore, though we don't know 
+\emph on
+f
+\emph default
+(S), we know that it has the same sorted order as S.
+ This is similar conceptually to problem 3, part a; we get the same minimum
+ spanning tree, regardless of the weights of the edges, as long as the sorted
+ order of the edges remains the same.
+ Therefore, it is possible to come up with such a subset S that meets the
+ two requirements.
+ 
+\end_layout
+
+\begin_layout Section
+Problem 5
+\end_layout
+
+\begin_layout Standard
+Essentially, this problem asks whether one can create any spanning tree
+ of a graph, from any other spanning tree, by swapping one vertex at a time.
+ If you can, then the resulting graph is connected.
+ 
+\end_layout
+
+\begin_layout Standard
+Each vertex 
+\emph on
+V
+\emph default
+ in 
+\emph on
+G
+\emph default
+ can have 0, 1, or more than 1 edges connecting it to the graph.
+ If 0, then the graph is not connected and we don't need to worry about
+ it.
+ If 1, then no matter how many changes to the spanning tree you make, that
+ one edge must always be a part of the spanning tree, because it's the only
+ way to include 
+\emph on
+V
+\emph default
+.
+ 
+\end_layout
+
+\begin_layout Standard
+If, however, 
+\emph on
+V
+\emph default
+ has more than 1 edge connecting it to the rest of the graph, then there
+ are multiple ways to connect it to the spanning tree.
+ As long as you remove one of 
+\emph on
+V
+\emph default
+'s edges from the spanning tree before adding a different one, you still
+ maintain the property of not having any cycles.
+ This is because the minimum spanning tree connects every edge to every
+ other; by adding an edge to 
+\emph on
+V
+\emph default
+ without first removing one, it would necessarily create a cycle which includes
+ 
+\emph on
+V
+\emph default
+.
+ However, by removing 
+\emph on
+V
+\emph default
+'s edge, we prevent the creation of a cycle.
+ By doing this – removing one of 
+\emph on
+V
+\emph default
+'s edges from the spanning tree and adding a different one of 
+\emph on
+V
+\emph default
+'s edges to the spanning tree – we are creating neighbor spanning trees.
+ That is, these two spanning trees have an edge between them in 
+\emph on
+H
+\emph default
+.
+ Because we can treat any node in 
+\emph on
+G
+\emph default
+ as vertex 
+\emph on
+V
+\emph default
+, we can reconfigure the spanning tree into any configuration that is legal
+ for a spanning tree to have, simply by removing one edge to a vertex, and
+ adding a different edge to that vertex.
+ Therefore, the graph 
+\emph on
+H
+\emph default
+ is connected.
+\end_layout
+
+\end_body
+\end_document

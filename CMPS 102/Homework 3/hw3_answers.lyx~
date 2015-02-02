@@ -1,0 +1,829 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+CMPS 102 Homework 3: Network Flow
+\end_layout
+
+\begin_layout Author
+Benjamin Gordon / bcgordon@ucsc.edu
+\end_layout
+
+\begin_layout Date
+5/27/2014
+\end_layout
+
+\begin_layout Section
+Problem 1: Dining Cows 
+\end_layout
+
+\begin_layout Subsection
+Algorithm
+\end_layout
+
+\begin_layout Standard
+First, we assume that 
+\begin_inset Formula $f>n$
+\end_inset
+
+ and 
+\begin_inset Formula $d>n$
+\end_inset
+
+, otherwise there can be no perfect matching.
+ Then, we create two bipartite matching networks; one with cows on the left
+ and dishes on the right, and one with cows on the left and drinks on the
+ right.
+ Each cow has an edge coming into it from the source, and each dish and
+ drink have an edge going from it to the sink.
+ The capacity of each edge in either network is 1.
+ We start with just one of the two networks (which one you choose is arbitrary).
+ Then, perform Ford-Fulkerson’s Maximum Flow algorithm on that network;
+ if the maximum flow is equal to the number of cows, then we have found
+ a perfect matching.
+ Otherwise, terminate the algorithm; it is impossible to give every cow
+ a complete meal.
+ Then, simply repeat this process for the other network.
+ If both networks have maximum flow equal to the number of cows, then it
+ is possible to give every cow a complete meal.
+ 
+\end_layout
+
+\begin_layout Subsection
+Proof of Correctness
+\end_layout
+
+\begin_layout Standard
+Ford-Fulkerson’s algorithm is proven to find the maximum flow between the
+ source and the sink for a network flow problem.
+ Since every edge has capacity 1, the maximum amount of flow through a graph
+ is bounded by the number of edges leaving the source, which is equal to
+ the number of cows.
+ This is why we know we have a perfect matching if the maximum flow is equal
+ to the number of cows; it means every cow has found a corresponding drink/dish.
+ Since each cow’s choice of drinks does not affect their choice of dish,
+ and vice versa, we can treat the problem as two separate subproblems.
+ If both networks have a maximum flow equal to the number of cows, then
+ every cow must have both a dish and a drink corresponding to their preferences,
+ and the problem is therefore solved.
+ 
+\end_layout
+
+\begin_layout Subsection
+Proof of Runtime 
+\end_layout
+
+\begin_layout Standard
+Ford-Fulkerson’s algorithm performs a series of augmentations, and terminates
+ when no further augmentations are possible.
+ Therefore, the runtime of this algorithm is bounded by: (upper bound of
+ number of augmentations) 
+\begin_inset Formula $\times$
+\end_inset
+
+ (upper bound of runtime of a single augmentation).
+ We can use either BFS or DFS to find augmenting paths; this has the runtime
+ 
+\begin_inset Formula $O\left(|V|+|E|\right)$
+\end_inset
+
+.
+ We can then say that, since the capacities are all integer values, and
+ each augmenting path increases the amount of flow through the network by
+ at least 1, there will need to be at most 
+\begin_inset Formula $F$
+\end_inset
+
+ augmentations, where 
+\begin_inset Formula $F$
+\end_inset
+
+ is the maximum amount of flow through the network.
+ 
+\begin_inset Formula $F$
+\end_inset
+
+ is also equal to 
+\begin_inset Formula $n$
+\end_inset
+
+, the number of cows being considered.
+ Thus we have a runtime of 
+\begin_inset Formula $O\left(n\times\left(|V|+|E|\right)\right)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Section
+Problem 2: Outsourcing 
+\end_layout
+
+\begin_layout Standard
+Note: I discussed this problem with Jordan Hyman, but it did not provide
+ any insights.
+ I later discussed it with Joshua Nussbaum Evan Hughes, but the only insight
+ I gained was that I was on the right track already.
+\end_layout
+
+\begin_layout Subsection
+Algorithm 
+\end_layout
+
+\begin_layout Standard
+We will set up this problem as a bipartite network with some intermediate
+ nodes.
+ On the left side, we have the cows; the source has an edge connecting it
+ to each cow, and each of these edges has a capacity of 3.
+ On the right side, we have the projects; each project has an edge connecting
+ it to the sink, and each of these edges has capacity 
+\begin_inset Formula $k$
+\end_inset
+
+.
+ We also have some intermediate nodes; each project has 
+\begin_inset Formula $C$
+\end_inset
+
+ intermediate nodes, where 
+\begin_inset Formula $C$
+\end_inset
+
+ is the total number of colors of cows.
+ Each of these intermediate nodes has an edge flowing into its corresponding
+ project, with capacity 
+\begin_inset Formula $k-1$
+\end_inset
+
+.
+ Each cow has an edge connecting it to each intermediate node that corresponds
+ both to the cow’s color and the projects that it would be interested in
+ working on; each of these edges has capacity 1.
+ Then we can simply run Ford-Fulkerson’s algorithm on this bipartite graph;
+ if the flow into the sink is equal to 
+\begin_inset Formula $k\times P$
+\end_inset
+
+, where 
+\begin_inset Formula $P$
+\end_inset
+
+ is the number of projects, then we have successfully found a matching which
+ fulfills all our constraints.
+ Let us define such a matching to be an “optimal solution.” 
+\end_layout
+
+\begin_layout Subsection
+Proof of Correctness
+\end_layout
+
+\begin_layout Standard
+To begin with, assume 
+\begin_inset Formula $k<\frac{m}{n}$
+\end_inset
+
+, where 
+\begin_inset Formula $m$
+\end_inset
+
+ is the number of cows and 
+\begin_inset Formula $n$
+\end_inset
+
+ is the number of projects; otherwise, there can be no optimal solution,
+ because there simply are not enough cows.
+ Ford-Fulkerson’s algorithm is proven to find the maximum flow between the
+ source and the sink for a network flow problem.
+ Given this, I will prove the algorithm’s correctness by explaining why
+ this layout forces the maximum flow to comply with all 4 of the given constrain
+ts.
+ 
+\end_layout
+
+\begin_layout Itemize
+Each cow can only work on problems in its set 
+\begin_inset Formula $P_{i}$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Since each cow only has edges to the projects in its list, it can only end
+ up working on projects in said list.
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Each cow can work on at most 3 projects.
+ 
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Each cow gets only 3 units of flow, each edge leaving the cow has capacity
+ 1, and flow must be in decimal values (because you can’t program with a
+ fraction of a cow).
+ Therefore, each cow will work on at most 3 projects.
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+There must be at least 2 different colors of cows working on every project.
+ 
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Because the capacity of the edges from project 
+\begin_inset Formula $\rightarrow$
+\end_inset
+
+ sink is 
+\begin_inset Formula $k$
+\end_inset
+
+, but the capacity of the edges from color 
+\begin_inset Formula $\rightarrow$
+\end_inset
+
+ project is 
+\begin_inset Formula $k-1$
+\end_inset
+
+, in order for each project to have 
+\begin_inset Formula $k$
+\end_inset
+
+ flowing into it, there must be more than one color of cow working on it.
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+There must be at least 
+\begin_inset Formula $k$
+\end_inset
+
+ cows working on each project.
+ 
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Once a project has reached 
+\begin_inset Formula $k$
+\end_inset
+
+ cows (since we’ve already proven that it must have at least 2 colors of
+ cow working on it by that point), there is no reason to ever add another
+ cow to it.
+ Thus, each project 
+\begin_inset Formula $\rightarrow$
+\end_inset
+
+ sink edge has capacity 
+\begin_inset Formula $k$
+\end_inset
+
+, in order to prevent cows working on a project that already has all of
+ its constraints fulfilled.
+ Based on this, our assumption that 
+\begin_inset Formula $k<\frac{m}{n}$
+\end_inset
+
+, and the proven correctness of Ford-Fulkerson’s algorithm, we can say that
+ if this constraint is not fulfilled, it is because there is no optimal
+ solution.
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Subsection
+Proof of Runtime
+\end_layout
+
+\begin_layout Standard
+Ford-Fulkerson’s algorithm performs a series of augmentations, and terminates
+ when no further augmentations are possible.
+ Therefore, the runtime of this algorithm is bounded by: (upper bound of
+ number of augmentations) 
+\begin_inset Formula $\times$
+\end_inset
+
+ (upper bound of runtime of a single augmentation).
+ We can use either BFS or DFS to find augmenting paths; this has the runtime
+ 
+\begin_inset Formula $O\left(|V|+|E|\right)$
+\end_inset
+
+.
+ We can then say that, since the capacities are all integer values, and
+ each augmenting path increases the amount of flow through the network by
+ at least 1, there will need to be at most 
+\begin_inset Formula $F$
+\end_inset
+
+ augmentations, where 
+\begin_inset Formula $F$
+\end_inset
+
+ is the maximum amount of flow through the network.
+ 
+\begin_inset Formula $F$
+\end_inset
+
+ is also equal to 
+\begin_inset Formula $3n$
+\end_inset
+
+, the number of cows being considered 
+\begin_inset Formula $\times$
+\end_inset
+
+ the number of jobs each cow can take.
+ Thus we have a runtime of 
+\begin_inset Formula $O\left(3n\times\left(|V|+|E|\right)\right)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Section
+Problem 3 
+\end_layout
+
+\begin_layout Standard
+Note: I discussed this problem with Steven Chou, who gave me the idea of
+ how to set up the network flow.
+\end_layout
+
+\begin_layout Subsection
+Part A 
+\end_layout
+
+\begin_layout Standard
+An example of a non-rearrangeable matrix is: 
+\begin_inset Formula $\begin{bmatrix}0 & 1 & 0\\
+1 & 0 & 1\\
+0 & 1 & 0
+\end{bmatrix}$
+\end_inset
+
+ Because no matter how you swap rows and columns, two of the 1’s will always
+ share a row, and the other two will always share a column.
+ 
+\end_layout
+
+\begin_layout Subsection
+Part B
+\end_layout
+
+\begin_layout Subsubsection
+Algorithm
+\end_layout
+
+\begin_layout Standard
+Set up a bipartite matching with each row being a node on the left, and
+ each column being a node on the right.
+ The source has edges to each row, and each column has an edge to the sink.
+ If the matrix entry represented by the intersection of row 
+\begin_inset Formula $R_{i}$
+\end_inset
+
+ and column 
+\begin_inset Formula $C_{j}$
+\end_inset
+
+ is a 1, then there is an edge between 
+\begin_inset Formula $R_{i}$
+\end_inset
+
+ and 
+\begin_inset Formula $C_{j}$
+\end_inset
+
+.
+ All edges in the graph have capacity 1.
+ Now run Ford-Fulkerson’s algorithm on this network; if the maximum flow
+ is 
+\begin_inset Formula $n$
+\end_inset
+
+, then the matrix is rearrangeable.
+ 
+\end_layout
+
+\begin_layout Subsubsection
+Proof of Correctness
+\end_layout
+
+\begin_layout Standard
+Consider the fact that any 1’s in an 
+\begin_inset Formula $nxn$
+\end_inset
+
+ matrix which share a row, must always share a row despite any number of
+ row or column swaps.
+ Why is this? Consider that row swaps simply rearrange the row in relation
+ to the other rows, without changing the contents of any row; also, column
+ swaps can rearrange the order of entries in a row, but they cannot move
+ any entries into a different row.
+ The inverse of this also holds for 1’s which share a column.
+ If the matrix is rearrangeable, it must have at least 
+\begin_inset Formula $n$
+\end_inset
+
+ 1’s which do not share a vertex or column with each other.
+ Otherwise, based on the above consideration, there is no way to rearrange
+ the matrix such that there are 1’s on the diagonal.
+ However, if there are 
+\begin_inset Formula $n$
+\end_inset
+
+ such 1’s in the matrix, then the matrix must be rearrangeable, because
+ no amount of swaps will change the condition that there are 
+\begin_inset Formula $n$
+\end_inset
+
+ 1’s which do not share a row or column.
+ Now we must prove that if the maximum flow is equal to 
+\begin_inset Formula $n$
+\end_inset
+
+, then there are 
+\begin_inset Formula $n$
+\end_inset
+
+ 1’s that do not share a row or column with each other.
+ Our graph is set up such that any 1’s which share a row will be represented
+ as multiple edges leaving that row; similarly, any 1’s which share a column
+ will be represented as multiple edges entering that column.
+ However, since each edge has capacity 1, in order to have a max flow of
+ 
+\begin_inset Formula $n$
+\end_inset
+
+, there must be at least 1 edge leaving each row and at least 1 edge entering
+ each column.
+ This arrangement represents the case in which there are 
+\begin_inset Formula $n$
+\end_inset
+
+ 1’s which do not share a row or column.
+ Therefore, max flow = 
+\begin_inset Formula $n$
+\end_inset
+
+ implies that there are 
+\begin_inset Formula $n$
+\end_inset
+
+ 1’s which do not share a row or column, which in turn implies that the
+ matrix is rearrangeable.
+\end_layout
+
+\begin_layout Subsubsection
+Proof of Runtime
+\end_layout
+
+\begin_layout Standard
+Ford-Fulkerson’s algorithm performs a series of augmentations, and terminates
+ when no further augmentations are possible.
+ Therefore, the runtime of this algorithm is bounded by: (upper bound of
+ number of augmentations) 
+\begin_inset Formula $\times$
+\end_inset
+
+ (upper bound of runtime of a single augmentation).
+ We can use either BFS or DFS to find augmenting paths; this has the runtime
+ 
+\begin_inset Formula $O\left(|V|+|E|\right)$
+\end_inset
+
+.
+ We can then say that, since the capacities are all integer values, and
+ each augmenting path increases the amount of flow through the network by
+ at least 1, there will need to be at most 
+\begin_inset Formula $F$
+\end_inset
+
+ augmentations, where 
+\begin_inset Formula $F$
+\end_inset
+
+ is the maximum amount of flow through the network.
+ 
+\begin_inset Formula $F$
+\end_inset
+
+ is also equal to 
+\begin_inset Formula $n$
+\end_inset
+
+, the number of rows/columns in the matrix.
+ Thus we have a runtime of 
+\begin_inset Formula $O\left(n\times\left(|V|+|E|\right)\right)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Section
+Problem 4 
+\end_layout
+
+\begin_layout Subsection
+Part A
+\end_layout
+
+\begin_layout Standard
+Set up the problem as a matrix, with each row representing a set and each
+ column representing a driver.
+ From there, we can adapt that matrix into a bipartite network flow, and
+ solve the feasible rounding from there.
+ There must be a feasible rounding, because the integrality theorem states
+ that if there is a solution to a network flow problem, then there must
+ be an integral solution to it as well.
+ 
+\end_layout
+
+\begin_layout Subsection
+Part B
+\end_layout
+
+\begin_layout Subsubsection
+Algorithm 
+\end_layout
+
+\begin_layout Standard
+First, Set up the problem as a matrix, with each row representing a set
+ of people and each column representing a person.
+ Each member in the matrix is that person’s likelihood that they drive on
+ that given day.
+ Have the sums of each row and column represented on the right and the bottom,
+ respectively.
+ Then adapt this matrix into a bipartite network flow.
+ Have each person represented as a node on the left and each day represented
+ as a node on the right.
+ The source has an edge to each person; that edge’s maximum capacity is
+ equal to the ceiling of that person’s total driving obligation, and its
+ minimum flow requirement is equal to the floor of that person’s total driving
+ obligation.
+ Each person has an edge to a day if that person is going to carpool on
+ that day; each of these edges has capacity 1.
+ Finally, each day is connected to the sink by a node with capacity 1.
+ Run Ford-Fulkerson’s algorithm on the resulting graph, and when it is complete,
+ the people will all have flows connecting to the days they should drive.
+ 
+\end_layout
+
+\begin_layout Subsubsection
+Proof of Correctness 
+\end_layout
+
+\begin_layout Standard
+This is essentially a feasible rounding problem, as we went over in class.
+ By the integrality theorem, any network flow with capacities which are
+ all integers MUST have a maximum flow which is integer-valued and in which
+ every value is an integer.
+ Each person will receive flow units equal to either the floor or ceiling
+ of their total obligation, therefore each person must be driving on a number
+ of days which is an acceptable rounding of their obligation.
+ 
+\end_layout
+
+\begin_layout Subsubsection
+Proof of Runtime
+\end_layout
+
+\begin_layout Standard
+We are essentially just using Ford-Fulkerson’s algorithm, which has runtime
+ 
+\begin_inset Formula $O\left(|E|^{2}\times log\left(C\right)\right)$
+\end_inset
+
+, where 
+\begin_inset Formula $E$
+\end_inset
+
+ is the number of edges and 
+\begin_inset Formula $C$
+\end_inset
+
+ is the largest arc capacity.
+ This is polynomial in 
+\begin_inset Formula $k$
+\end_inset
+
+ and 
+\begin_inset Formula $d$
+\end_inset
+
+ because 
+\begin_inset Formula $E$
+\end_inset
+
+ is equal to the sum of the number of days each person carpools, and 
+\begin_inset Formula $C$
+\end_inset
+
+ is equal to the ceiling of the largest total driving obligation from our
+ set of drivers.
+ 
+\end_layout
+
+\begin_layout Section
+Problem 5: Anything For A Good Bath 
+\end_layout
+
+\begin_layout Subsection
+Algorithm 
+\end_layout
+
+\begin_layout Standard
+In order for there to be a solution to this problem, there must be an edge
+ in the input graph which is single-handedly preventing an additional augmenting
+ path from existing; all that would be necessary to find an additional augmentin
+g path is to upgrade that edge.
+ Therefore, in order for a solution to exist, there must be at least 
+\begin_inset Formula $d-1$
+\end_inset
+
+ edges in the final input graph which have not reached capacity, where 
+\begin_inset Formula $d$
+\end_inset
+
+ is the minimum depth from source to sink, because an augmenting path must
+ have depth at least 
+\emph on
+
+\begin_inset Formula $d$
+\end_inset
+
+
+\emph default
+.
+ Consider only those edges in the residual graph with 0 remaining capacity,
+ i.e.
+ edges which have reached capacity in the input graph.
+ For each of these edges in the residual graph, do two things: traverse
+ the graph forward, considering only edges leaving each node with capacity
+ 
+\begin_inset Formula $>0$
+\end_inset
+
+; and traverse the graph backward, considering only edges entering each
+ node with capacity 
+\begin_inset Formula $>0$
+\end_inset
+
+.
+ As you traverse this graph in this way, remove each edge with capacity
+ 
+\begin_inset Formula $>0$
+\end_inset
+
+ from the list of edges to consider - this way we only visit each edge in
+ the graph once.
+ If both the source and the sink cannot be reached in this way from any
+ edge with capacity 0 in the residual graph, there is no solution to the
+ problem.
+ However, if from such an edge 
+\begin_inset Formula $s$
+\end_inset
+
+ in the residual graph, both the source and the sink can be reached by this
+ traversal, considering only edges with capacity 
+\begin_inset Formula $>0$
+\end_inset
+
+, then edge 
+\begin_inset Formula $s$
+\end_inset
+
+ is a solution.
+ 
+\end_layout
+
+\begin_layout Subsection
+Proof of Correctness
+\end_layout
+
+\begin_layout Standard
+By traversing the graph forward and backward from each edge in the residual
+ graph with capacity 0, we are finding out whether or not each such edge
+ would be a member of an augmenting path if its capacity were upgraded.
+ Since we only consider forward paths with capacity 
+\begin_inset Formula $>0$
+\end_inset
+
+ during this traversal, we can be sure that if both the source and the sink
+ can be reached, that the edge we are considering is the sole bottleneck
+ in what would otherwise constitute an augmenting path.
+ And since we are considering every edge with capacity 0 in the residual
+ graph, we know that if such a bottleneck exists, we will find it.
+ Also, as we traverse each edge, if it has capacity 
+\begin_inset Formula $>0$
+\end_inset
+
+, we prevent it from being considered in traversals in the future.
+ We can be sure that this will not affect future iterations of this algorithm
+ from finding a solution, because if we find another edge with capacity
+ 0 in the residual graph during our traversal, then we know the current
+ edge being considered is not the only bottleneck on this potential augmenting
+ path; we don’t want to waste time reconsidering this augmenting path in
+ the future.
+ 
+\end_layout
+
+\begin_layout Subsection
+Proof of Runtime
+\end_layout
+
+\begin_layout Standard
+This proof is very simple: since we prevent each edge with capacity 
+\begin_inset Formula $>0$
+\end_inset
+
+ from future consideration as we traverse it, each edge in the graph can
+ be visited at most once.
+ Therefore, this algorithm has runtime 
+\begin_inset Formula $O\left(|E|\right)$
+\end_inset
+
+, where 
+\begin_inset Formula $E$
+\end_inset
+
+ is the number of edges in the graph.
+\end_layout
+
+\begin_layout Standard
+
+\end_layout
+
+\end_body
+\end_document

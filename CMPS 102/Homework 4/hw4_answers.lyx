@@ -1,0 +1,629 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+CMPS 102 Homework 4: Dynamic Programming
+\end_layout
+
+\begin_layout Author
+Benjamin Gordon / bcgordon@ucsc.edu
+\end_layout
+
+\begin_layout Date
+6/5/2014
+\end_layout
+
+\begin_layout Section
+Air Travel
+\end_layout
+
+\begin_layout Standard
+Let us begin by defining 
+\begin_inset Formula $Cost_{p,n}$
+\end_inset
+
+ to be the cost of the walkway on side 
+\emph on
+p
+\emph default
+ at position 
+\emph on
+n
+\emph default
+.
+ Let us also define 
+\begin_inset Formula $\left\{ L_{n},R_{n}\right\} $
+\end_inset
+
+ to be the shortest possible paths to walkways 
+\emph on
+L
+\emph default
+ and 
+\emph on
+R
+\emph default
+ at position 
+\emph on
+n
+\emph default
+.
+ We can recursively define 
+\begin_inset Formula $\left\{ L_{n},R_{n}\right\} $
+\end_inset
+
+ = 
+\begin_inset Formula $\left\{ min\left[\left(L_{n-1}+Cost_{l,n}\right),\left(R_{n-1}+k+Cost_{l,n}\right)\right],min\left[\left(R-1+cost_{r,n}\right),\left(L_{n-1}+k+Cost_{r,n}\right)\right]\right\} $
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+This recursion holds because when we are computing the optimal path including
+ a given walkway, we are using the already-computed optimal path for all
+ the previous walkways.
+ So when we start from the beginning, we will calculate the optimal path
+ up to and including the given walkway, for every walkway.
+ 
+\end_layout
+
+\begin_layout Standard
+For a data structure, we will use two arrays.
+ One array will hold the optimal path up to and including a given walkway
+ for all the left side walkways, and the other will hold the same values
+ for the right side.
+ We will fill each array in sequential order from 1 to 
+\emph on
+n
+\emph default
+.
+ 
+\end_layout
+
+\begin_layout Standard
+The size of each array is 
+\emph on
+n
+\emph default
+, and for each spot, we do a couple of arithmetic problems based on the
+ previous two spots in the array and do a comparison.
+ Therefore, each spot in the array is filled in constant time, and this
+ algorithm runs in 
+\begin_inset Formula $O\left(n\right)$
+\end_inset
+
+ time.
+ 
+\end_layout
+
+\begin_layout Section
+Sightseeing
+\end_layout
+
+\begin_layout Standard
+Our recursive property is: 
+\begin_inset Formula $OPT\left(n\right)=min\left[\left(OPT\left(n-1\right)+\left(r\times d_{n}\right)\right),\left(b+OPT\left(n-5\right)\right)\right]$
+\end_inset
+
+.
+ This recursion holds because at each point, we have two options - we can
+ take a taxi to the next destination, or we can take a limo to the point
+ from five destinations back.
+ Since 
+\begin_inset Formula $OPT\left(n-1\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $OPT\left(n-5\right)$
+\end_inset
+
+ are guaranteed to be correct, we know that we will choose the smallest
+ cost path for 
+\begin_inset Formula $OPT\left(n\right)$
+\end_inset
+
+ .
+ 
+\end_layout
+
+\begin_layout Standard
+For a data structure, we will use a linked list.
+ Each node will contain two things: the 
+\begin_inset Formula $OPT\left(index\right)$
+\end_inset
+
+ value, and an array with length equal to the index.
+ Each spot in this index will contain either a 
+\emph on
+T
+\emph default
+ or an 
+\emph on
+L
+\emph default
+, representing whether a taxi or limo was used for this distance.
+ That way, we can return an actual schedule for the 
+\emph on
+OPT
+\emph default
+ value.
+ 
+\end_layout
+
+\begin_layout Standard
+Since we have a linked list of length 
+\emph on
+n
+\emph default
+, and for each computation of 
+\emph on
+OPT
+\emph default
+, we simply do two lookups, some arithmetic, and a comparison, this algorithm
+ runs in 
+\begin_inset Formula $O\left(n\right)$
+\end_inset
+
+ time.
+ 
+\end_layout
+
+\begin_layout Section
+A Museum
+\end_layout
+
+\begin_layout Standard
+To solve this problem, we need to maximize facts gained per minute over
+ our entire time at the museum.
+ This means we need to know the number of facts we will gain per minute
+ for every possible amount of time spent at every exhibit.
+ Let us define 
+\begin_inset Formula $G_{i}\left(x\right)$
+\end_inset
+
+ to be the number of facts 
+\emph on
+per minute
+\emph default
+ we will have gained if we spend 
+\emph on
+x
+\emph default
+ minutes at exhibit 
+\emph on
+i
+\emph default
+.
+ We can now do some preprocessing, and make an 
+\begin_inset Formula $n\times m$
+\end_inset
+
+ matrix, call it 
+\emph on
+G
+\emph default
+, of all the 
+\begin_inset Formula $G_{i}\left(x\right)$
+\end_inset
+
+ values for every exhibit.
+ This will take 
+\emph on
+mn
+\emph default
+ time, as it’s just one calculation per element of the matrix.
+ While we compute 
+\emph on
+G
+\emph default
+, we will also pay attention to the point at which 
+\begin_inset Formula $f_{i}\left(x\right)=s$
+\end_inset
+
+, where i is some exhibit 
+\begin_inset Formula $i\leq n$
+\end_inset
+
+, and set all points 
+\begin_inset Formula $G_{i}\left(m\right)$
+\end_inset
+
+ where 
+\begin_inset Formula $m>x$
+\end_inset
+
+ equal to 0, so the algorithm will not select them.
+\end_layout
+
+\begin_layout Standard
+When we run 
+\begin_inset Formula $OPT\left(m\right)$
+\end_inset
+
+, it will find the maximum reachable 
+\begin_inset Formula $G_{i}\left(x\right)$
+\end_inset
+
+ value in the museum, and spend enough minutes to take that value.
+ Call this number of minutes 
+\emph on
+y
+\emph default
+.
+ Then it will denote all values in 
+\emph on
+G
+\emph default
+ which are associated with that exhibit, and for which 
+\begin_inset Formula $m\leq y$
+\end_inset
+
+, as taken, and call 
+\begin_inset Formula $OPT\left(m-y\right)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Thus we have 
+\begin_inset Formula $OPT\left(m\right)=max_{1\leq y\leq m}\left(max_{1\leq k\leq n}\left(G_{k}\left(y\right)\right)\right)+OPT\left(m-y\right)$
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Standard
+This recursion holds because the key to solving this problem is maximizing
+ facts per minute.
+ This solution doesn’t just consider the maximum amount of facts for each
+ minute; it considers the amount of facts gained for all minutes spent at
+ any given exhibit, and always takes enough time to get the greatest possible
+ return given the amount of time available.
+\end_layout
+
+\begin_layout Standard
+By evaluating the taken values in 
+\emph on
+G
+\emph default
+ once the algorithm has completed, we can find the optimal schedule.
+ The running time for this algorithm is 
+\begin_inset Formula $O\left(m^{2}n\right)$
+\end_inset
+
+, because at each stage it scans through at most 
+\emph on
+mn 
+\emph default
+elements of 
+\emph on
+G
+\emph default
+, and does this at most 
+\emph on
+m
+\emph default
+ times.
+\end_layout
+
+\begin_layout Section
+Pesky Children
+\end_layout
+
+\begin_layout Standard
+Define 
+\emph on
+S
+\emph default
+ to be a set of 
+\emph on
+j
+\emph default
+ grades less than 
+\emph on
+n
+\emph default
+, 
+\emph on
+m
+\emph default
+ to be the number of students in each grade, 
+\emph on
+
+\begin_inset Formula $A_{i}$
+\end_inset
+
+
+\emph default
+ to be the number of 
+\emph on
+A
+\emph default
+ votes in grade 
+\emph on
+i
+\emph default
+, and 
+\emph on
+
+\begin_inset Formula $B_{i}$
+\end_inset
+
+
+\emph default
+ to be the number of 
+\emph on
+B
+\emph default
+ votes in grade 
+\emph on
+i
+\emph default
+.
+ Let 
+\emph on
+
+\begin_inset Formula $X_{p}$
+\end_inset
+
+
+\emph default
+ and 
+\begin_inset Formula $Y_{j-p}$
+\end_inset
+
+ be the number of 
+\emph on
+A
+\emph default
+ votes in bus 1 and 2 when they have 
+\emph on
+p
+\emph default
+ and 
+\begin_inset Formula $j-p$
+\end_inset
+
+ grades respectively.
+ OPT will return true if it is possible to have an assignment that meets
+ the requirement, and false if it does not.
+\end_layout
+
+\begin_layout Standard
+There are two cases in which 
+\begin_inset Formula $OPT\left(j,p,X_{p},Y_{j-p}\right)$
+\end_inset
+
+ will return true.
+ Either:
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $OPT(j-1,p-1,X_{p-1},Y_{j-p})$
+\end_inset
+
+ is true, and 
+\begin_inset Formula $\left(p-1\right)\geq\left\lfloor \frac{\left(j-1\right)}{2}\right\rfloor $
+\end_inset
+
+, and 
+\begin_inset Formula $X_{p-1}+A_{j}\geq\left(p-1\right)\times\nicefrac{m}{4}$
+\end_inset
+
+ (this is the case in which the last grade added is added to bus 1), OR
+ 
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $OPT(j-1,p,X_{p},Y_{j-p-1})$
+\end_inset
+
+ is true, and 
+\begin_inset Formula $\left(j-p-1\right)\geq\left\lfloor \frac{\left(j-1\right)}{2}\right\rfloor $
+\end_inset
+
+, and 
+\begin_inset Formula $Y_{j-p-1}+A_{j}\geq\left(j-p-1\right)\times\nicefrac{m}{4}$
+\end_inset
+
+ (the case where the last grade added is added to bus 2)
+\end_layout
+
+\begin_layout Standard
+We can say that each bus has a majority vote for restaurant 
+\emph on
+A
+\emph default
+ after 
+\emph on
+j
+\emph default
+ grades if there is a majority vote for 
+\emph on
+A
+\emph default
+ in each bus after the 
+\emph on
+j
+\emph default
+th grade is added.
+ If the last grade added was added to bus 1, and bus 2 already has a majority
+ vote, then we have an overall majority vote for 
+\emph on
+A
+\emph default
+ if adding a grade to bus 1 results in a majority vote there as well.
+ The same goes for bus 2; if there was already a majority vote in bus 1,
+ and adding a grade to bus 2 results in a majority vote for 
+\emph on
+A
+\emph default
+ there, then we have an overall majority vote for 
+\emph on
+A
+\emph default
+.
+\end_layout
+
+\begin_layout Standard
+At each computation of OPT, we should save which grade is going into each
+ bus.
+ We will keep an array of size 
+\begin_inset Formula $\nicefrac{n}{2}$
+\end_inset
+
+ for each bus, and fill each index in either array with a grade number.
+ Since there are 
+\emph on
+n
+\emph default
+ array spots to fill in total, and each time we calculate OPT, we need to
+ reconsider how every grade is placed in either bus, the algorithm runs
+ in 
+\begin_inset Formula $n^{3}$
+\end_inset
+
+ time.
+ 
+\end_layout
+
+\begin_layout Section
+Typesetting
+\end_layout
+
+\begin_layout Standard
+I noticed immediately that this problem was similar to the least squares
+ problem discussed in class.
+ Let us define line 
+\begin_inset Formula $L_{i}$
+\end_inset
+
+ to be the line starting at word 
+\emph on
+i
+\emph default
+.
+ Each line must begin at some word 
+\begin_inset Formula $w_{i}$
+\end_inset
+
+ and end at some word 
+\begin_inset Formula $w_{j}$
+\end_inset
+
+; therefore, assuming that the algorithm has computed every prior line optimally
+, we only need to find the length of this line with minimal slack.
+ We can do this by adding on words 
+\begin_inset Formula $w_{i}+1$
+\end_inset
+
+, 
+\begin_inset Formula $w_{i}+2$
+\end_inset
+
+… to line 
+\begin_inset Formula $L_{i}$
+\end_inset
+
+ one by one until we go over the maximum length 
+\emph on
+L
+\emph default
+.
+ Let us also define 
+\begin_inset Formula $S_{i,j}$
+\end_inset
+
+ to be the slack of the line from 
+\emph on
+i
+\emph default
+ to 
+\emph on
+j
+\emph default
+.
+ Our algorithm therefore looks like this: 
+\begin_inset Formula $OPT\left(w_{n}\right)=\min_{1\leq j\leq n}\left[\left(S_{j,n}\right){}^{2}+OPT\left(w_{j-1}\right)\right]$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Computing OPT takes n time, because we consider every word in the list once.
+ Since we compute OPT 
+\emph on
+n
+\emph default
+ times, our recurrence is 
+\begin_inset Formula $O\left(n^{2}\right)$
+\end_inset
+
+.
+ 
+\end_layout
+
+\end_body
+\end_document

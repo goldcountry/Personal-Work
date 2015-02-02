@@ -1,0 +1,1 @@
+The first step to implementing information flow analysis in Javascript, is to list all possible ways for Javascript to output information.

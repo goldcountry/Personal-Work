@@ -1,0 +1,796 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+CMPS 102 Homework 1
+\end_layout
+
+\begin_layout Author
+Benjamin Gordon / bcgordon@ucsc.edu
+\end_layout
+
+\begin_layout Date
+4/21/2014
+\end_layout
+
+\begin_layout Section
+Problem 1
+\end_layout
+
+\begin_layout Standard
+For the purposes of this proof, let us define 
+\begin_inset Quotes eld
+\end_inset
+
+sequential
+\begin_inset Quotes erd
+\end_inset
+
+ to be a property of an array such that its first element is smaller than
+ its last element; 
+\begin_inset Quotes eld
+\end_inset
+
+non-sequential
+\begin_inset Quotes erd
+\end_inset
+
+ will henceforth be used to mean the exact opposite of 
+\begin_inset Quotes eld
+\end_inset
+
+sequential
+\begin_inset Quotes erd
+\end_inset
+
+ (I.E.
+ the array's first element is greater than its last element).
+\end_layout
+
+\begin_layout Subsection
+Procedure
+\end_layout
+
+\begin_layout Standard
+First, we check if the entire array is sequential.
+ Though we are told that the array wraps around somewhere in the middle,
+ it is possible that we could have an edge case in which it wraps around
+ at the end of the array, leaving it perfectly ordered; this checks for
+ such a case.
+ If the array is sequential, then the answer is the last element in the
+ array.
+\end_layout
+
+\begin_layout Standard
+For each recursive frame, we divide the array in half, creating two sub-arrays
+ - left and right - and check whether these new sub-arrays are sequential.
+ At this stage, there are two possible cases:
+\end_layout
+
+\begin_layout Enumerate
+One of the two sub-arrays is sequential, while the other is non-sequential.
+\end_layout
+
+\begin_layout Enumerate
+Both of the sub-arrays are sequential.
+\end_layout
+
+\begin_layout Standard
+If the first case is true, we disregard the sequential sub-array and use
+ the non-sequential one as the input for a new recursive frame.
+ We continue recursively dividing the arrays and checking whether they are
+ sequential until we reach the second case (both arrays are sequential).
+ At this point, we know that we have divided the array in between where
+ it wraps; our solution is therefore the last element in the left sub-array.
+\end_layout
+
+\begin_layout Subsection
+Proof of Correctness
+\end_layout
+
+\begin_layout Standard
+Because the numbers in the array must be distinct and strictly increasing,
+ if array[n] > array[n+1] for some index n, then array[n] is the largest
+ number in the array.
+ The array only wraps around at one point, so when we divide the array in
+ half, only one of the halves can contain said point.
+ When we check whether one of the two sub-arrays is non-sequential, we are
+ actually trying to find which sub-array contians the wrap point.
+ As we are only concerned with the sub-array containing the wrap (and therefore
+ the largest element), we can disregard the other sub-array.
+\end_layout
+
+\begin_layout Standard
+However, it is also possible that neither array contains this point; if
+ this is the case, then we have divided the array in between the point where
+ it wraps.
+ This corresponds to case 2 in the procedure.
+ If we have, in fact, divided the array between the largest and smallest
+ values, then it is obvious that the last element on the left side is the
+ largest element.
+ The final piece of the proof is to recognize that this algorithm calls
+ for us to continue subdividing the array until we divide between the largest
+ and smallest elements - so we must eventually find the largest element.
+ 
+\emph on
+Q.E.D.
+\end_layout
+
+\begin_layout Subsection
+Proof of Runtime
+\end_layout
+
+\begin_layout Standard
+At each recursive step, we:
+\end_layout
+
+\begin_layout Itemize
+Divide the data set in half,
+\end_layout
+
+\begin_layout Itemize
+Do two constant-time comparisons, and
+\end_layout
+
+\begin_layout Itemize
+Continue the recursion on only one half of the data set.
+\end_layout
+
+\begin_layout Standard
+Therefore, our recurrence relation looks like this:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+T(n)=T(\nicefrac{n}{2})+C
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+For this relation, we get 
+\emph on
+b=1 
+\emph default
+and 
+\emph on
+c=2
+\emph default
+, giving us an E of 0.
+ 
+\begin_inset Formula $\Theta\left(n^{E}\right)=\Theta\left(n^{0}\right)=\Theta\left(1\right)$
+\end_inset
+
+, which is the same as our constant-time comparison C; therefore, by case
+ 2 of the master theorem, our runtime is 
+\begin_inset Formula $\Theta\left(n^{E}\log n\right)=\Theta\left(\log n\right).$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Problem 2
+\end_layout
+
+\begin_layout Standard
+For the purposes of this proof, let us define 
+\begin_inset Quotes eld
+\end_inset
+
+majority
+\begin_inset Quotes erd
+\end_inset
+
+ to be a property of an array such that 
+\begin_inset Formula $\frac{n}{2}+1$
+\end_inset
+
+of its elements are equal to each other.
+ 
+\end_layout
+
+\begin_layout Subsubsection
+Procedure
+\end_layout
+
+\begin_layout Standard
+To begin with, we will divide the array of ballots in half recursively until
+ we are left with a number of pairs of ballots.
+ When we begin collapsing the recursive tree back up, each sub-array will
+ be returned along with an integer value - call it 
+\emph on
+p.
+ 
+\emph default
+For each pair, we compare the two ballots.
+ If they are equal, we return the pair to its parent recursive frame, along
+ with a 
+\emph on
+p 
+\emph default
+of 2 to denote that a majority was found in this pair.
+ If they are not equal, they are returned to their parent frame along with
+ a 
+\emph on
+p
+\emph default
+ of 0, denoting that there was no majority.
+\end_layout
+
+\begin_layout Standard
+Then we have two pairs of ballots to compare.
+ If neither of them had a majority (they both had a 
+\emph on
+p
+\emph default
+ of 0), we can simply concatenate one to the other, and return them up the
+ recursive tree without doing any comparisons.
+ If, however, one of the pairs had a majority, we take all the ballots from
+ the non-majority pair and compare them to the first ballot of the majority
+ pair.
+ We count the number of equalities we find, and add that to the 
+\emph on
+p
+\emph default
+ that was returned to this frame along with the majority pair.
+ As long as the resulting 
+\emph on
+p 
+\emph default
+value is greater than half of the current size of the array, there continues
+ to be a majority in this sub-array.
+ In such a case, we would concatenate the non-majority pair to the end of
+ the majority pair, and return this new array along with the new 
+\emph on
+p
+\emph default
+ (if both pairs had a majority, the procedure is essentially the same -
+ just pick one at random to act as the non-majority pair).
+ If, however, the resulting 
+\emph on
+p 
+\emph default
+is less than or equal half the size of the current array, the algorithm
+ returns a 
+\emph on
+p 
+\emph default
+of 0.
+ 
+\end_layout
+
+\begin_layout Standard
+We continue this process of comparing all the ballots of one sub-array to
+ the first value of the other, counting equalities, and checking that the
+ majority still exists, until we have reconstructed the array completely.
+ If the 
+\emph on
+p 
+\emph default
+value of the final, complete array is greater than 
+\begin_inset Formula $\nicefrac{n}{2}$
+\end_inset
+
+, then we know that we have a winner in the election; otherwise, we need
+ to take another vote.
+\end_layout
+
+\begin_layout Subsection
+Proof of Correctness
+\end_layout
+
+\begin_layout Standard
+The core of this algorithm's correctness is the following two theorems,
+ which I will briefly prove before continuing.
+\end_layout
+
+\begin_layout Subsubsection
+Theorem 1 Proof
+\end_layout
+
+\begin_layout Subparagraph
+Claim: 
+\end_layout
+
+\begin_layout Standard
+In order for any one candidate to have a majority over the whole array,
+ they must have a majority in at least one of the halves of the array.
+ 
+\end_layout
+
+\begin_layout Subparagraph
+Proof by contradiction: 
+\end_layout
+
+\begin_layout Standard
+Assume that there is a candidate who has a majority in the array, but does
+ not have a majority in either half of the array.
+ Then the greatest number of votes that said candidate can have in each
+ half is 
+\begin_inset Formula $\nicefrac{n}{4}$
+\end_inset
+
+, with 
+\emph on
+n 
+\emph default
+being the size of the original array.
+ If this is the case, then the total number of votes that this candidate
+ has is 
+\begin_inset Formula $\nicefrac{n}{2}$
+\end_inset
+
+, which means that this candidate does not have a majority.
+ 
+\emph on
+Q.E.D.
+\end_layout
+
+\begin_layout Subsubsection
+Theorem 2 Proof
+\end_layout
+
+\begin_layout Paragraph
+Claim: 
+\end_layout
+
+\begin_layout Standard
+For any size array, we can always determine whether it has a majority in
+ 
+\begin_inset Formula $O\left(n\right)$
+\end_inset
+
+ as long as we know whether its two sub-arrays have a majority, and the
+ size of the majority (if there is one).
+\end_layout
+
+\begin_layout Paragraph
+Proof:
+\end_layout
+
+\begin_layout Standard
+There are three possible cases:
+\end_layout
+
+\begin_layout Enumerate
+Neither sub-array has a majority.
+\end_layout
+
+\begin_layout Enumerate
+One sub-array has a majority, while the other does not.
+\end_layout
+
+\begin_layout Enumerate
+Both sub-arrays have a majority.
+\end_layout
+
+\begin_layout Standard
+In the event of case 1, by the theorem proven above, we know - without doing
+ any comparisons - that the newly combined array cannot possibly have a
+ majority.
+ Because no comparisons are necessary, this takes a constant amount of time.
+\end_layout
+
+\begin_layout Standard
+In the event of case 2, it is possible that the array might have a majority;
+ however, we need to do some analysis to be sure.
+ Let us call the sub-array containing the majority 
+\emph on
+a,
+\emph default
+ and the other sub-array 
+\emph on
+b
+\emph default
+; let us also give the candidate for whom there is a majority, the name
+ 
+\emph on
+x.
+
+\emph default
+ Since the first element in 
+\emph on
+a
+\emph default
+ always contains a ballot for 
+\emph on
+x
+\emph default
+ (because we concatenate non-majority sub-arrays to the end of majority
+ sub-arrays), by comparing each element of 
+\emph on
+b
+\emph default
+ to the first element of 
+\emph on
+a
+\emph default
+, we can count how many ballots in 
+\emph on
+b 
+\emph default
+are for candidate 
+\emph on
+x.
+ 
+\emph default
+If we add this value to 
+\emph on
+a
+\emph default
+'s 
+\emph on
+p
+\emph default
+ value, we get the total number of ballots in both arrays that are for 
+\emph on
+x
+\emph default
+.
+ If this value is greater than half of the length of 
+\emph on
+a+b
+\emph default
+, then candidate 
+\emph on
+x
+\emph default
+ still holds a majority in the full array; otherwise, there is no majority
+\emph on
+.
+ 
+\emph default
+Because we don't have to compare each ballot to each other ballot - just
+ half the ballots to a single ballot - this case takes 
+\begin_inset Formula $\Theta\left(n\right)$
+\end_inset
+
+ time.
+\end_layout
+
+\begin_layout Standard
+Case 3 is handled identically to case 2, with the exception that either
+ array can be either 
+\emph on
+a 
+\emph default
+or 
+\emph on
+b
+\emph default
+.
+ Because it is handled the same way as case 2, case 3 also runs in 
+\begin_inset Formula $\Theta\left(n\right)$
+\end_inset
+
+ time.
+ 
+\emph on
+Q.E.D.
+\end_layout
+
+\begin_layout Subsubsection
+Algorithm Proof
+\end_layout
+
+\begin_layout Standard
+Since a pair of ballots only contains two ballots, if there is a majority
+ in said pair, then the two ballots must be equal.
+ Since we can check their equality with a single comparison, we can check
+ for a majority with a single comparison.
+ If there is a majority, we know exactly what the size of the majority is
+ (it is 2).
+ 
+\end_layout
+
+\begin_layout Standard
+Now we have all the information we need - we know whether the pair has a
+ majority, and we know the size of the majority (if there is one).
+ By applying theorem 2 at each recursive frame, we can determine whether
+ the entire array has a majority or not.
+ 
+\emph on
+Q.E.D.
+\end_layout
+
+\begin_layout Subsection
+Proof of Runtime
+\end_layout
+
+\begin_layout Standard
+At each recursive frame, we:
+\end_layout
+
+\begin_layout Itemize
+Divide the current array in half, calling the algorithm recursively on each
+ side, and
+\end_layout
+
+\begin_layout Itemize
+Once the two child frames return, if one of them contains a majority, do
+ 
+\emph on
+n 
+\emph default
+ballot comparisons.
+\end_layout
+
+\begin_layout Standard
+Therefore, the recurrence equation looks like this:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+T\left(n\right)=2T\left(\nicefrac{n}{2}\right)+O\left(n\right)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+For this relation, we get 
+\emph on
+b=2 
+\emph default
+and 
+\emph on
+c=2
+\emph default
+, giving us an E of 1.
+ 
+\begin_inset Formula $\Theta\left(n^{E}\right)=\Theta\left(n^{1}\right)=\Theta\left(n\right)$
+\end_inset
+
+, and 
+\begin_inset Formula $f\left(n\right)\in\Theta\left(n\right)$
+\end_inset
+
+; therefore, by the master theorem, our runtime is 
+\begin_inset Formula $O\left(n^{E}\log n\right)=O\left(n\log n\right).$
+\end_inset
+
+ I say 
+\begin_inset Formula $O\left(n\log n\right)$
+\end_inset
+
+and not 
+\begin_inset Formula $\Theta\left(n\log n\right)$
+\end_inset
+
+ because in many cases, the algorithm will skip a number of comparisons,
+ or all of them, leading to a faster runtime.
+ 
+\end_layout
+
+\begin_layout Section
+Problem 3
+\end_layout
+
+\begin_layout Subsection
+Informal Argument for Correctness
+\end_layout
+
+\begin_layout Standard
+For each number, consider where it should end up in the final, sorted array,
+ and where it begins in the unsorted array.
+ If the number begins in the upper third in the array, but it should be
+ in the lower third in the sorted array, then it will be moved to the middle
+ third during the second sort, and then down into the lower third during
+ the third sort.
+ If the reverse is true - the number begins in the lower third but should
+ be in the upper third - then it will be moved to the middle third during
+ the first sort, and then to the upper third during the second sort.
+ In this way, each number will end up in its proper section in the array.
+ Since the algorithm runs recursively, each subset of the array can be considere
+d its own array in which these same properties hold - so the algorithm must
+ return a fully sorted array.
+\end_layout
+
+\begin_layout Subsection
+Recurrence Relation
+\end_layout
+
+\begin_layout Standard
+At each recursive step, we take 
+\begin_inset Formula $\nicefrac{2}{3rds}$
+\end_inset
+
+ of the original array, and we do so 3 times.
+ Ultimately, since we continue dividing the arrays until they are of minimal
+ size, and only sort the minimally sized arrays, the nonrecursive cost at
+ each frame is trivial.
+ Therefore, the recurrence relation looks like this:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+T\left(n\right)=3T\left(\nicefrac{2n}{3}\right)+C=6T\left(\nicefrac{n}{3}\right)+C
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Which gives us 
+\emph on
+b=6
+\emph default
+ and 
+\emph on
+c=3
+\emph default
+.
+ 
+\begin_inset Formula $\nicefrac{\log_{2}6}{\log_{2}3}\approx1.63$
+\end_inset
+
+, so by the Master Theorem, 
+\begin_inset Formula $T\left(n\right)\in\Theta\left(n^{1.63}\right)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Section
+Problem 4
+\end_layout
+
+\begin_layout Subsection
+Procedure
+\end_layout
+
+\begin_layout Paragraph
+Base Case:
+\end_layout
+
+\begin_layout Standard
+We cannot find median+1 or median-1 in the array.
+\end_layout
+
+\begin_layout Paragraph
+Recursive Step:
+\end_layout
+
+\begin_layout Standard
+Find the median of the indices we are currently considering (for the first
+ run, this is every index).
+ Check if median is equal to 
+\begin_inset Formula $\left\lfloor \nicefrac{k}{2}\right\rfloor $
+\end_inset
+
+, where 
+\emph on
+k 
+\emph default
+is equal to the sum of the first and last indices we are currently considering.
+ Now there are two cases:
+\end_layout
+
+\begin_layout Enumerate
+The median is equal to 
+\begin_inset Formula $\left\lfloor \nicefrac{k}{2}\right\rfloor $
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+The median is greater than 
+\begin_inset Formula $\left\lfloor \nicefrac{k}{2}\right\rfloor $
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+In the event of case 1, search for median+1 in the array.
+ If it is not found, we have reached the base case; median+1 is our answer.
+ Otherwise, perform quicksort's partition function with median as the pivot;
+ once this is done, the median is in the exact midpoint of the array, and
+ all values greater than it are after it in the array.
+ Begin the recursive step again, this time considering only the indices
+ after the median.
+\end_layout
+
+\begin_layout Standard
+In the event of case 2, search for median-1 in the array.
+ If it is not found, we have reached the base case; median-1 is our answer.
+ Otherwise, perform quicksort's partition function with median as the pivot;
+ once this is done, the median is in the exact midpoint of the array, and
+ all values lesser than it are before it in the array.
+ Begin the recursive step again, this time considering only the indices
+ before the median.
+\end_layout
+
+\begin_layout Subsection
+Proof of Correctness
+\end_layout
+
+\begin_layout Standard
+If the median is equal to 
+\begin_inset Formula $\left\lfloor \nicefrac{k}{2}\right\rfloor $
+\end_inset
+
+, this means that in the array we are considering, no values lower than
+ the median have been skipped; the skipped value must be greater than the
+ median.
+ Conversely, if the median is greater than 
+\begin_inset Formula $\left\lfloor \nicefrac{k}{2}\right\rfloor $
+\end_inset
+
+, then a value lower than the median has been skipped.
+ 
+\end_layout
+
+\end_body
+\end_document
