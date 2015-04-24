@@ -1,4 +1,4 @@
-Stuff-and-also-things
+Benjamin Gordon's Personal Repo
 =====================
 
-This is my personal public repo. Here I store my resume, PGP Key, current class schedule, and any other information about myself that I want to make publicly available.
+This is my personal public repo. Here I store my resume, PGP Key, various bits of code I've written, and what have you.
