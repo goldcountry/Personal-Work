@@ -1,0 +1,120 @@
+URLs you can POST to:
+
+https://etch-messaging.appspot.com/users/new:
+	This is used to register new users. 
+
+	Expects: A JSON object with the following fields:
+	user: "the new user's username"
+	pass: "the new user's password" (this will have to be encrypted before sending, but we'll get to that later)
+
+	Returns:
+		"user created successfully" if the user was successfully created.
+		"username already taken" if that username is already taken.
+
+===================================
+https://etch-messaging.appspot.com/users/login:
+	This will be used for existing users to login to their account. It will decrypt the password that was sent, 
+	then hash that and compare it to the user's saved hash.
+
+	NOTE: This will only be used if we enable different users to login on the same phone. For the moment, we are not supporting this functionality - we assume a user is unique to a device, and vice versa.
+
+	Expects: A JSON object with the following fields:
+	user: "the user's username"
+	pass: "the user's password" (this will have to be encrypted before sending, but we'll get to that later)
+
+	Returns:
+		"no such user" if there is no such user
+		"login success" if the login was successful
+		"login failed" if the login failed for any reason other than the user not existing
+
+===================================
+https://etch-messaging.appspot.com/users/add_friend:
+	This is how a user will add friends.
+
+	Expects: A JSON object with the following fields:
+	user: "the name of the user who wants to add a friend"
+	pass: "that user's password"
+	friend: "the new friend's username"
+
+	Returns:
+	"no such user" if user doesn't exists.
+	"validation incorrect" if user exists but password is wrong.
+	"no such friend" if the new friend doesn't exist.
+	"request sent" if the user successfully attempts to friend someone.
+	"request accepted" if you have accepted someone's friend request.
+
+	Friends are not added to either user's list until both friends have added each other. See below for an explanation of how friending works.
+	
+===================================
+https://etch-messaging.appspot.com/users/check_freqs:
+	This is what you will ping to check whether any friends you have added have added you back. freqs = friend reqs
+
+	Expects: A JSON object with the following fields:
+	user: "the name of the user doing the check"
+	pass: "that user's password"
+
+	Returns:
+	Nothing, if no friends have been added.
+	If friends have been added, a JSON object with all the friends who have added you, numbered in no particular order. The server will then delete that user from freqs_accepted; that list only holds friends who have added you since the last time you checked.
+
+	See below for an explanation of how friending works.
+
+===================================
+https://etch-messaging.appspot.com/users/delete:
+	This will delete a user's profile and all associated inbound messages.
+
+	Expects: A JSON object with the following fields:
+	user: "the user's username"
+	pass: "the user's password" (this will have to be encrypted before sending, but we'll get to that later)
+
+===================================
+https://etch-messaging.appspot.com/send_message:
+	This is how a user will send a message to another user. The details of message sending and delivery are explained later.
+
+	Expects: A JSON object with the following fields:
+	time_sent: "the time the message was sent"
+	body: "the message's ciphertext"
+	from: "the sender of the message"
+	to: "the recipient of the message"
+	pass: "the sender's password" (this will have to be encrypted before sending, but we'll get to that later)
+
+===================================
+https://etch-messaging.appspot.com/check_messages:
+	This is how a user will check whether there are messages waiting.
+
+	Expects: A JSON object with the following fields:
+	user: "the user's username"
+	pass: "the user's password" (this will have to be encrypted before sending, but we'll get to that later)
+
+	Returns:
+	"No New Messages" if there are no new messages.
+	Otherwise, returns a string with all of the messages encoded as JSON objects with the following fields:
+		time_sent: "the time the message was sent"
+		body: "the message's ciphertext"
+		from: "the sender of the message"
+		to: "the recipient of the message"
+
+===================================
+
+
+Details of friending:
+
+Let's say user1 tries to friend user2. Here's what happens:
+
+user1 sends a message to /users/add_friend. The server:
+verifies that user1 exists.
+verifies that user1 is the correct user.
+verifies that user2 exists.
+adds "user2" to user1's sent_freqs list.
+adds "user1" to user2's received_freqs list.
+reponds "request sent"
+
+Now user2 adds user1 back. The server:
+verifies that user2 exists.
+verifies that user2 is the correct user.
+verifies that user1 exists.
+sees that user1 is in user2's received_freqs.
+removes user1 from user2's received_freqs.
+adds user1 to user2's friends.
+removes user2 from user1's sent_freqs.
+adds user2 to user1's friends and to user1's freqs_accepted.
